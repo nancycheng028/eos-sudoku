@@ -1,0 +1,25 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual envs
+.venv/
+env/
+venv/
+
+# Project data & artifacts
+data/
+datasets/
+checkpoints/
+*.pt
+*.bin
+wandb/
+logs/*.out
+*.png
+*.csv
+
+# OS/editor
+.DS_Store
+*.swp
+
