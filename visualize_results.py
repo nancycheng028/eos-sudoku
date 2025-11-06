@@ -2,20 +2,6 @@
 """
 Visualize EoS runs saved under experiments/**/checkpoint_seed_0.pth
 
-Expected checkpoint contents (from sudoku_eos_baseline.py):
-  {
-    "model_state": ...,
-    "args": { ... },
-    "history": {
-        "step": [...],
-        "loss": [...],
-        "acc": [...],
-        "grad_norm": [...],
-        "sharpness": [...]
-    },
-    "eos_threshold": float
-  }
-
 Outputs:
   experiments/comparison_loss.png
   experiments/comparison_acc.png
@@ -44,12 +30,20 @@ EXP_ROOT = Path("experiments")
 OUT_ROOT = EXP_ROOT  # write comparison plots into experiments/
 
 
+def _finite(x: np.ndarray) -> np.ndarray:
+    return np.isfinite(x)
+
+
 def find_runs(root: Path) -> List[Path]:
     return sorted([p for p in root.glob("*/checkpoint_seed_0.pth") if p.is_file()])
 
 
 def load_run(ckpt_path: Path) -> Dict:
-    ckpt = torch.load(ckpt_path, map_location="cpu")
+    # safer load to avoid pickle execution warning in future PyTorch versions
+    try:
+        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)  # torch >= 2.4
+    except TypeError:
+        ckpt = torch.load(ckpt_path, map_location="cpu")  # fallback for older torch
     hist = ckpt.get("history", {})
     args = ckpt.get("args", {})
     run = {
@@ -68,12 +62,19 @@ def load_run(ckpt_path: Path) -> Dict:
 
 def plot_comparison(runs: List[Dict], key: str, ylabel: str, out_name: str):
     plt.figure(figsize=(9, 5))
+    any_curve = False
     for r in runs:
         x = r["step"]
         y = r.get(key)
         if x.size == 0 or y.size == 0:
             continue
-        plt.plot(x, y, label=r["name"])
+        m = _finite(x) & _finite(y)
+        if m.any():
+            plt.plot(x[m], y[m], label=r["name"])
+            any_curve = True
+    if not any_curve:
+        plt.close()
+        return
     plt.xlabel("step")
     plt.ylabel(ylabel)
     plt.legend()
@@ -85,14 +86,21 @@ def plot_comparison(runs: List[Dict], key: str, ylabel: str, out_name: str):
 
 def plot_sharpness_with_threshold(runs: List[Dict]):
     plt.figure(figsize=(10, 6))
+    any_curve = False
     for r in runs:
         x, s = r["step"], r["sharpness"]
-        if x.size == 0:
+        if x.size == 0 or s.size == 0:
             continue
-        plt.plot(x, s, label=f"{r['name']} sharp")
-        thr = r.get("eos_threshold", float("nan"))
-        if not math.isnan(thr):
-            plt.hlines(thr, xmin=x.min(), xmax=x.max(), linestyles="--", label=f"2/lr {r['name']}")
+        m = _finite(x) & _finite(s)
+        if m.any():
+            plt.plot(x[m], s[m], label=f"{r['name']} sharp")
+            any_curve = True
+            thr = r.get("eos_threshold", float("nan"))
+            if not math.isnan(thr):
+                plt.hlines(thr, xmin=x[m].min(), xmax=x[m].max(), linestyles="--", label=f"2/lr {r['name']}")
+    if not any_curve:
+        plt.close()
+        return
     plt.xlabel("step")
     plt.ylabel("sharpness (≈ λ_max)")
     plt.legend(ncol=2)
@@ -105,14 +113,21 @@ def plot_sharpness_with_threshold(runs: List[Dict]):
 def plot_phase_ratio(runs: List[Dict]):
     """Plot sharpness / (2/lr) over steps; >1 implies EoS exceed."""
     plt.figure(figsize=(9, 5))
+    any_curve = False
     for r in runs:
         x, s = r["step"], r["sharpness"]
         thr = r.get("eos_threshold", float("nan"))
-        if x.size == 0 or math.isnan(thr) or thr == 0:
+        if x.size == 0 or s.size == 0 or math.isnan(thr) or thr == 0:
             continue
         ratio = s / thr
-        plt.plot(x, ratio, label=r["name"])
-    plt.axhline(1.0, color="black", linestyle=":", linewidth=1.0)
+        m = _finite(x) & _finite(ratio)
+        if m.any():
+            plt.plot(x[m], ratio[m], label=r["name"])
+            any_curve = True
+    if not any_curve:
+        plt.close()
+        return
+    plt.axhline(1.0, linestyle=":", linewidth=1.0)
     plt.xlabel("step")
     plt.ylabel("sharpness / (2/lr)")
     plt.legend()
@@ -127,21 +142,23 @@ def summarize(runs: List[Dict]):
     for r in runs:
         step = r["step"]
         last = -1 if step.size else None
+        max_sharp = float(np.nanmax(r["sharpness"])) if r["sharpness"].size else float("nan")
+        thr = float(r.get("eos_threshold", float("nan")))
         rows.append({
             "run": r["name"],
             "steps": int(step.size),
             "last_step": int(step[last]) if step.size else -1,
             "final_loss": float(r["loss"][last]) if r["loss"].size else float("nan"),
             "final_acc": float(r["acc"][last]) if r["acc"].size else float("nan"),
-            "max_sharpness": float(np.nanmax(r["sharpness"])) if r["sharpness"].size else float("nan"),
-            "eos_threshold": float(r.get("eos_threshold", float("nan"))),
-            "exceeded_eos": bool((r["sharpness"].size > 0) and (np.nanmax(r["sharpness"]) > r.get("eos_threshold", float("inf"))))
+            "max_sharpness": max_sharp,
+            "eos_threshold": thr,
+            "exceeded_eos": (max_sharp > thr) if (not math.isnan(thr)) else False,
         })
     df = pd.DataFrame(rows)
     out_csv = OUT_ROOT / "summary.csv"
     df.to_csv(out_csv, index=False)
     print(f"[viz] wrote {out_csv}")
-    # Pretty print
+    # pretty print
     with pd.option_context('display.max_colwidth', None):
         print("\n=== Summary (last metrics) ===")
         print(df.to_string(index=False))
@@ -154,7 +171,6 @@ def main():
         print(f"[viz] no runs found under {EXP_ROOT}/**/checkpoint_seed_0.pth")
         return
 
-    # Comparison plots
     plot_comparison(runs, key="loss", ylabel="train loss", out_name="comparison_loss.png")
     plot_comparison(runs, key="acc", ylabel="train acc (masked)", out_name="comparison_acc.png")
     plot_sharpness_with_threshold(runs)
@@ -164,4 +180,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
