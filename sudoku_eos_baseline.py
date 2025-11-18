@@ -32,6 +32,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, random_split
+from torch.optim.lr_scheduler import StepLR
 
 import matplotlib
 # for non-interactive environments, let user override via env
@@ -212,6 +213,9 @@ def train(args):
 
     model = CellMLP(hidden=args.hidden, dropout=args.dropout).to(device)
     opt = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0)
+    # Documentation for StepLR is here: https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.StepLR.html
+    # There exist other classes to do other LR behaviors: LinearLR, ExponentialLR, etc. 
+    scheduler = StepLR(opt, step_size=5, gamma=args.lr_gamma)
 
     history = History(step=[], loss=[], acc=[], grad_norm=[], sharpness=[])
     step = 0
@@ -253,6 +257,8 @@ def train(args):
                 print(f"[ep {epoch:02d} | step {step:06d}] loss={loss.item():.4f} acc={acc:.4f} "
                       f"grad={gnorm:.2f} sharp={sharp:.2f} thresh={eos_threshold:.2f}")
             step += 1
+        
+        scheduler.step()
 
         # end epoch: quick val report
         model.eval()
@@ -321,6 +327,7 @@ def parse_args():
     p.add_argument("--epochs", type=int, default=5)
     p.add_argument("--batch-size", type=int, default=256)
     p.add_argument("--lr", type=float, default=0.1)
+    p.add_argument("--lr_gamma", type=float, default=0)
     p.add_argument("--hidden", type=int, default=512)
     p.add_argument("--dropout", type=float, default=0.1)
     p.add_argument("--clip", type=float, default=0.0, help="grad clipping max-norm; 0 disables")
