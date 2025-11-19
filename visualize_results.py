@@ -50,7 +50,8 @@ def load_run(ckpt_path: Path) -> Dict:
         "name": ckpt_path.parent.name,
         "path": ckpt_path,
         "args": args,
-        "eos_threshold": float(ckpt.get("eos_threshold", float("nan"))),
+        "eos_threshold": np.array(hist.get("eos_threshold", []), dtype=float) if "eos_threshold" in hist.keys() else float(ckpt.get("eos_threshold", float("nan"))),
+        "lrs": np.array(hist.get("lrs", []), dtype=float),
         "step": np.array(hist.get("step", []), dtype=float),
         "loss": np.array(hist.get("loss", []), dtype=float),
         "acc": np.array(hist.get("acc", []), dtype=float),
@@ -88,16 +89,18 @@ def plot_sharpness_with_threshold(runs: List[Dict]):
     plt.figure(figsize=(10, 6))
     any_curve = False
     for r in runs:
-        x, s = r["step"], r["sharpness"]
+        # this is a very hacky way to fix but i wanted it to be compatible with the old output files as well where EoS thresholds were floats not arrays
+        x, s, thr = r["step"], r["sharpness"], r["eos_threshold"] if type(r["eos_threshold"]) != float else np.full(len(r["step"]), r["eos_threshold"])
         if x.size == 0 or s.size == 0:
             continue
         m = _finite(x) & _finite(s)
         if m.any():
             plt.plot(x[m], s[m], label=f"{r['name']} sharp")
+            plt.plot(x[m], thr[m], linestyle='--', label=f"2/lr {r['name']}")
             any_curve = True
-            thr = r.get("eos_threshold", float("nan"))
-            if not math.isnan(thr):
-                plt.hlines(thr, xmin=x[m].min(), xmax=x[m].max(), linestyles="--", label=f"2/lr {r['name']}")
+            # thr = r.get("eos_threshold", float("nan"))
+            # if not math.isnan(thr):
+            #     plt.hlines(thr, xmin=x[m].min(), xmax=x[m].max(), linestyles="--", label=f"2/lr {r['name']}")
     if not any_curve:
         plt.close()
         return
@@ -115,9 +118,9 @@ def plot_phase_ratio(runs: List[Dict]):
     plt.figure(figsize=(9, 5))
     any_curve = False
     for r in runs:
-        x, s = r["step"], r["sharpness"]
-        thr = r.get("eos_threshold", float("nan"))
-        if x.size == 0 or s.size == 0 or math.isnan(thr) or thr == 0:
+        x, s, thr = r["step"], r["sharpness"], r["eos_threshold"] if type(r["eos_threshold"]) != float else np.full(len(r["step"]), r["eos_threshold"])
+        #thr = r.get("eos_threshold", float("nan"))
+        if x.size == 0 or s.size == 0 or thr.size == 0: #or math.isnan(thr) or thr == 0:
             continue
         ratio = s / thr
         m = _finite(x) & _finite(ratio)
@@ -143,7 +146,7 @@ def summarize(runs: List[Dict]):
         step = r["step"]
         last = -1 if step.size else None
         max_sharp = float(np.nanmax(r["sharpness"])) if r["sharpness"].size else float("nan")
-        thr = float(r.get("eos_threshold", float("nan")))
+        #thr = float(r.get("eos_threshold", float("nan")))
         rows.append({
             "run": r["name"],
             "steps": int(step.size),
@@ -151,8 +154,8 @@ def summarize(runs: List[Dict]):
             "final_loss": float(r["loss"][last]) if r["loss"].size else float("nan"),
             "final_acc": float(r["acc"][last]) if r["acc"].size else float("nan"),
             "max_sharpness": max_sharp,
-            "eos_threshold": thr,
-            "exceeded_eos": (max_sharp > thr) if (not math.isnan(thr)) else False,
+            #"eos_threshold": thr,
+            #"exceeded_eos": (max_sharp > thr) if (not math.isnan(thr)) else False,
         })
     df = pd.DataFrame(rows)
     out_csv = OUT_ROOT / "summary.csv"

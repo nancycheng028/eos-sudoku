@@ -32,7 +32,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, random_split
-from torch.optim.lr_scheduler import StepLR
+from torch.optim.lr_scheduler import StepLR, ExponentialLR, PolynomialLR
 
 import matplotlib
 # for non-interactive environments, let user override via env
@@ -114,9 +114,11 @@ class History:
     acc: List[float]
     grad_norm: List[float]
     sharpness: List[float]
+    lrs: List[float]
+    eos_threshold: List[float]
 
     def as_dict(self):
-        return {k: getattr(self, k) for k in ["step", "loss", "acc", "grad_norm", "sharpness"]}
+        return {k: getattr(self, k) for k in ["step", "loss", "acc", "grad_norm", "sharpness", "lrs", "eos_threshold"]}
 
 
 def masked_ce_loss(logits: torch.Tensor, targets: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
@@ -215,13 +217,22 @@ def train(args):
     opt = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0)
     # Documentation for StepLR is here: https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.StepLR.html
     # There exist other classes to do other LR behaviors: LinearLR, ExponentialLR, etc. 
-    scheduler = StepLR(opt, step_size=5, gamma=args.lr_gamma)
+    if args.lr_type == 'constant':
+        pass
+    elif args.lr_type == 'step':
+        scheduler = StepLR(opt, step_size=1, gamma=args.lr_gamma)
+    elif args.lr_type == 'exponential':
+        scheduler = ExponentialLR(opt, gamma=args.lr_gamma)
+    elif args.lr_type == 'polynomial':
+        scheduler = PolynomialLR(opt, total_iters=args.epochs + 1, power=args.lr_gamma)
 
-    history = History(step=[], loss=[], acc=[], grad_norm=[], sharpness=[])
+    history = History(step=[], lrs=[], eos_threshold=[], loss=[], acc=[], grad_norm=[], sharpness=[])
     step = 0
-    eos_threshold = 2.0 / args.lr  # classical EoS threshold ~ 2 / eta
 
     for epoch in range(1, args.epochs + 1):
+        cur_lr = opt.param_groups[0]['lr']
+        eos_threshold = 2.0 / cur_lr  # classical EoS threshold ~ 2 / eta
+        
         model.train()
         for batch in train_loader:
             x, y, m = (t.to(device) for t in batch)
@@ -252,13 +263,16 @@ def train(args):
             history.acc.append(acc)
             history.grad_norm.append(gnorm)
             history.sharpness.append(sharp)
+            history.lrs.append(cur_lr)
+            history.eos_threshold.append(eos_threshold)
 
             if step % args.log_every == 0:
-                print(f"[ep {epoch:02d} | step {step:06d}] loss={loss.item():.4f} acc={acc:.4f} "
+                print(f"[ep {epoch:02d} | step {step:06d}] lr={cur_lr:.4f} loss={loss.item():.4f} acc={acc:.4f} "
                       f"grad={gnorm:.2f} sharp={sharp:.2f} thresh={eos_threshold:.2f}")
             step += 1
         
-        scheduler.step()
+        if args.lr_type != 'constant':
+            scheduler.step()
 
         # end epoch: quick val report
         model.eval()
@@ -279,7 +293,7 @@ def train(args):
         "model_state": model.state_dict(),
         "args": vars(args),
         "history": history.as_dict(),
-        "eos_threshold": eos_threshold,
+        #"eos_threshold": eos_threshold,
     }
     out_path = Path("sudoku_eos_checkpoint.pth")
     torch.save(ckpt, out_path)
@@ -327,7 +341,8 @@ def parse_args():
     p.add_argument("--epochs", type=int, default=5)
     p.add_argument("--batch-size", type=int, default=256)
     p.add_argument("--lr", type=float, default=0.1)
-    p.add_argument("--lr_gamma", type=float, default=0)
+    p.add_argument("--lr_type", type=str, default="constant")
+    p.add_argument("--lr_gamma", type=float, default=1)
     p.add_argument("--hidden", type=int, default=512)
     p.add_argument("--dropout", type=float, default=0.1)
     p.add_argument("--clip", type=float, default=0.0, help="grad clipping max-norm; 0 disables")
