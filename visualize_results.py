@@ -123,6 +123,10 @@ def plot_phase_ratio(runs: List[Dict]):
         if x.size == 0 or s.size == 0 or thr.size == 0: #or math.isnan(thr) or thr == 0:
             continue
         ratio = s / thr
+        
+        print(r["name"], 'sharpness', np.count_nonzero(~np.isnan(r["sharpness"])), 'entries of', len(r["sharpness"]), 'in sharpness history are non-nan')
+        print(r["name"], 'ratio', np.count_nonzero(~np.isnan(ratio)), 'entries of', len(ratio), 'in ratio calculation are non-nan')
+        
         m = _finite(x) & _finite(ratio)
         if m.any():
             plt.plot(x[m], ratio[m], label=r["name"])
