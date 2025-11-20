@@ -1,0 +1,1 @@
+command: sudoku_eos_baseline.py --optim sgd --lr 2.0 --epochs 8 --batch-size 512 --run-name lr2.0_bs512_ep8_ms50k_seed0

@@ -1,2 +1,1 @@
-params: epochs=20, lr=10.0, max_samples=50000, seed=0
-timestamp: 2025-11-06T16:42:33-05:00
+command: sudoku_eos_baseline.py --optim sgd --lr 10.0 --epochs 20 --batch-size 512 --run-name lr10.0_ep20_ms50k_seed0

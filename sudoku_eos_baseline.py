@@ -7,7 +7,10 @@ Sudoku EoS Baseline (PyTorch)
 - Logs loss, accuracy, grad-norm
 - Approximates largest Hessian eigenvalue ("sharpness") via power iteration
   using autograd Hessian–vector products on a mini-batch
-- Saves: sudoku_eos_checkpoint.pth (weights+history), eos_analysis.png (plot)
+- Saves each run under: experiments/<run_name>/ with
+    - checkpoint_seed_<seed>.pth
+    - history.csv
+    - eos_analysis.png (loss, acc, grad, sharpness vs 2/lr, phase ratio)
 
 Run (headless safe):
     export MPLBACKEND=Agg
@@ -15,16 +18,15 @@ Run (headless safe):
 
 Place this file at the project root:
     /orcd/home/002/cheng028/eos-sudoku/sudoku_eos_baseline.py
-
-Tested with: torch 2.4.1+cu121, python 3.10
 """
 from __future__ import annotations
 import argparse
 import math
 import random
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -35,10 +37,12 @@ from torch.utils.data import Dataset, DataLoader, random_split
 from torch.optim.lr_scheduler import StepLR, ExponentialLR, PolynomialLR
 
 import matplotlib
+
 # for non-interactive environments, let user override via env
 if not matplotlib.get_backend().lower().startswith("agg"):
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
 
 # ------------------------------
 # Data utilities
@@ -48,6 +52,7 @@ def _str81_to_array(s: str) -> np.ndarray:
     s = s.strip()
     assert len(s) == 81, f"Expected 81 chars, got {len(s)}"
     return np.array([int(c) for c in s], dtype=np.int64)
+
 
 class KaggleSudoku(Dataset):
     """Kaggle CSV with columns: 'quizzes', 'solutions'.
@@ -79,9 +84,11 @@ class KaggleSudoku(Dataset):
         y = sol.astype(np.int64) - 1  # targets in 0..8 for CE
         return torch.from_numpy(x), torch.from_numpy(y), torch.from_numpy(mask.astype(np.bool_))
 
+
 # ------------------------------
 # Model
 # ------------------------------
+
 class CellMLP(nn.Module):
     """MLP over flattened per-cell features.
 
@@ -104,9 +111,11 @@ class CellMLP(nn.Module):
         z = self.net(x.view(b, -1))
         return z.view(b, 81, 9)
 
+
 # ------------------------------
 # Training helpers
 # ------------------------------
+
 @dataclass
 class History:
     step: List[int]
@@ -118,12 +127,19 @@ class History:
     eos_threshold: List[float]
 
     def as_dict(self):
-        return {k: getattr(self, k) for k in ["step", "loss", "acc", "grad_norm", "sharpness", "lrs", "eos_threshold"]}
+        return {
+            "step": self.step,
+            "loss": self.loss,
+            "acc": self.acc,
+            "grad_norm": self.grad_norm,
+            "sharpness": self.sharpness,
+            "lrs": self.lrs,
+            "eos_threshold": self.eos_threshold,
+        }
 
 
 def masked_ce_loss(logits: torch.Tensor, targets: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
     # logits: [B,81,9], targets: [B,81] in 0..8, mask: [B,81] True if originally blank
-    B = logits.size(0)
     logits = logits[mask]
     targets = targets[mask]
     if logits.numel() == 0:
@@ -177,7 +193,6 @@ def estimate_top_hessian_eig(model: nn.Module, loss_fn, batch, device: str, iter
     logits = model(x)
     loss = loss_fn(logits, y, m)
     params = [p for p in model.parameters() if p.requires_grad]
-    # init v like params
     v = [torch.randn_like(p) for p in params]
     _normalize(v)
     lam = 0.0
@@ -191,6 +206,35 @@ def estimate_top_hessian_eig(model: nn.Module, loss_fn, batch, device: str, iter
         _ = _normalize(v)
     return float(lam)
 
+
+# ------------------------------
+# Experiment naming
+# ------------------------------
+
+def make_run_name(args: argparse.Namespace) -> str:
+    """Canonical experiment name used under experiments/."""
+    if getattr(args, "run_name", ""):
+        return args.run_name
+
+    parts = []
+    if args.optim.lower() == "adam":
+        parts.append("adam")
+
+    parts.append(f"lr{args.lr:g}")
+
+    if args.lr_type != "constant":
+        parts.append(f"{args.lr_type}_g{args.lr_gamma:g}")
+
+    parts.append(f"bs{args.batch_size}")
+    parts.append(f"ep{args.epochs}")
+
+    if args.max_samples:
+        parts.append(f"ms{int(args.max_samples / 1000)}k")
+
+    parts.append(f"seed{args.seed}")
+    return "_".join(parts)
+
+
 # ------------------------------
 # Main train loop
 # ------------------------------
@@ -203,27 +247,46 @@ def train(args):
 
     csv_path = Path(args.csv)
     assert csv_path.exists(), f"CSV not found: {csv_path}"
-    ds = KaggleSudoku(csv_path, max_samples=args.max_samples, seed=args.seed)
 
+    # set up experiment directory
+    run_name = make_run_name(args)
+    exp_root = Path("experiments")
+    run_dir = exp_root / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    print(f"[run] saving outputs under {run_dir.resolve()}")
+
+    ds = KaggleSudoku(csv_path, max_samples=args.max_samples, seed=args.seed)
     n_total = len(ds)
     n_val = max(1000, int(0.1 * n_total))
     n_train = n_total - n_val
     train_ds, val_ds = random_split(ds, [n_train, n_val], generator=torch.Generator().manual_seed(args.seed))
 
-    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True, num_workers=2, pin_memory=(device=="cuda"))
-    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, num_workers=2, pin_memory=(device=="cuda"))
+    train_loader = DataLoader(
+        train_ds,
+        batch_size=args.batch_size,
+        shuffle=True,
+        num_workers=2,
+        pin_memory=(device == "cuda"),
+    )
+    val_loader = DataLoader(
+        val_ds,
+        batch_size=args.batch_size,
+        shuffle=False,
+        num_workers=2,
+        pin_memory=(device == "cuda"),
+    )
 
     model = CellMLP(hidden=args.hidden, dropout=args.dropout).to(device)
 
     # ---- Optimizer ----
-    if args.optim == "sgd":
+    if args.optim.lower() == "sgd":
         opt = torch.optim.SGD(
             model.parameters(),
             lr=args.lr,
-            momentum=0.9,
+            momentum=args.momentum,
             weight_decay=args.weight_decay,
         )
-    elif args.optim == "adam":
+    elif args.optim.lower() == "adam":
         opt = torch.optim.Adam(
             model.parameters(),
             lr=args.lr,
@@ -234,13 +297,26 @@ def train(args):
     else:
         raise ValueError(f"Unknown optimizer: {args.optim}")
 
+    # ---- LR scheduler ----
+    scheduler = None
+    if args.lr_type == "constant":
+        scheduler = None
+    elif args.lr_type == "step":
+        scheduler = StepLR(opt, step_size=1, gamma=args.lr_gamma)
+    elif args.lr_type == "exponential":
+        scheduler = ExponentialLR(opt, gamma=args.lr_gamma)
+    elif args.lr_type == "polynomial":
+        scheduler = PolynomialLR(opt, total_iters=args.epochs + 1, power=args.lr_gamma)
+    else:
+        raise ValueError(f"Unknown lr_type: {args.lr_type}")
+
     history = History(step=[], lrs=[], eos_threshold=[], loss=[], acc=[], grad_norm=[], sharpness=[])
     step = 0
 
     for epoch in range(1, args.epochs + 1):
-        cur_lr = opt.param_groups[0]['lr']
+        cur_lr = opt.param_groups[0]["lr"]
         eos_threshold = 2.0 / cur_lr  # classical EoS threshold ~ 2 / eta
-        
+
         model.train()
         for batch in train_loader:
             x, y, m = (t.to(device) for t in batch)
@@ -259,12 +335,13 @@ def train(args):
             # Cheap sharpness estimate every "log_every" steps using a small sub-batch
             sharp = float("nan")
             if step % args.log_every == 0:
-                # sample a tiny batch from val for stability
                 try:
                     batch_small = next(iter(val_loader))
                 except StopIteration:
                     batch_small = batch
-                sharp = estimate_top_hessian_eig(model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters)
+                sharp = estimate_top_hessian_eig(
+                    model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
+                )
 
             history.step.append(step)
             history.loss.append(loss.item())
@@ -275,11 +352,14 @@ def train(args):
             history.eos_threshold.append(eos_threshold)
 
             if step % args.log_every == 0:
-                print(f"[ep {epoch:02d} | step {step:06d}] lr={cur_lr:.4f} loss={loss.item():.4f} acc={acc:.4f} "
-                      f"grad={gnorm:.2f} sharp={sharp:.2f} thresh={eos_threshold:.2f}")
+                print(
+                    f"[ep {epoch:02d} | step {step:06d}] lr={cur_lr:.4f} "
+                    f"loss={loss.item():.4f} acc={acc:.4f} "
+                    f"grad={gnorm:.2f} sharp={sharp:.2f} thresh={eos_threshold:.2f}"
+                )
             step += 1
-        
-        if args.lr_type != 'constant':
+
+        if scheduler is not None:
             scheduler.step()
 
         # end epoch: quick val report
@@ -301,38 +381,65 @@ def train(args):
         "model_state": model.state_dict(),
         "args": vars(args),
         "history": history.as_dict(),
-        #"eos_threshold": eos_threshold,
     }
-    out_path = Path("sudoku_eos_checkpoint.pth")
-    torch.save(ckpt, out_path)
-    print(f"[done] wrote {out_path.resolve()}")
+    ckpt_path = run_dir / f"checkpoint_seed_{args.seed}.pth"
+    torch.save(ckpt, ckpt_path)
+    print(f"[done] wrote {ckpt_path.resolve()}")
 
-    # Plot
-    plot_history(history, eos_threshold)
+    # Save manifest with exact command
+    manifest_path = run_dir / "run_manifest.txt"
+    with manifest_path.open("w") as f:
+        f.write(f"command: {' '.join(sys.argv)}\n")
+
+    # Save history as CSV
+    hist_df = pd.DataFrame(history.as_dict())
+    hist_df.to_csv(run_dir / "history.csv", index=False)
+
+    # Plot per-run curves (includes phase ratio)
+    plot_history(history, out_png=str(run_dir / "eos_analysis.png"))
 
 
-def plot_history(history: History, eos_threshold: float, out_png: str = "eos_analysis.png"):
+def plot_history(history: History, out_png: str = "eos_analysis.png"):
     steps = np.array(history.step)
     loss = np.array(history.loss)
     acc = np.array(history.acc)
     grad = np.array(history.grad_norm)
-    sharp = np.array(history.sharpness)
+    sharp = np.array(history.sharpness, dtype=float)
+    thr = np.array(history.eos_threshold, dtype=float)
 
-    fig, axes = plt.subplots(4, 1, figsize=(9, 12), sharex=True)
+    # phase ratio = sharpness / (2/lr)
+    ratio = sharp / thr
+
+    fig, axes = plt.subplots(5, 1, figsize=(9, 15), sharex=True)
+
+    # 1) loss
     axes[0].plot(steps, loss)
     axes[0].set_ylabel("train loss")
 
+    # 2) accuracy
     axes[1].plot(steps, acc)
     axes[1].set_ylabel("train acc (masked)")
 
+    # 3) grad norm
     axes[2].plot(steps, grad)
     axes[2].set_ylabel("grad-norm")
 
-    axes[3].plot(steps, sharp, label="sharpness (≈ λ_max)")
-    axes[3].axhline(eos_threshold, linestyle="--", label="2 / lr")
+    # 4) sharpness vs 2/lr
+    m_sharp = np.isfinite(sharp) & np.isfinite(thr)
+    if m_sharp.any():
+        axes[3].plot(steps[m_sharp], sharp[m_sharp], label="sharpness (≈ λ_max)")
+        axes[3].plot(steps[m_sharp], thr[m_sharp], linestyle="--", label="2 / lr")
     axes[3].set_ylabel("sharpness")
-    axes[3].set_xlabel("step")
     axes[3].legend()
+
+    # 5) phase ratio (EoS)
+    m_ratio = np.isfinite(ratio)
+    if m_ratio.any():
+        axes[4].plot(steps[m_ratio], ratio[m_ratio], label="phase ratio")
+    axes[4].axhline(1.0, linestyle="--", color="gray", label="EoS = 1")
+    axes[4].set_ylabel("sharpness / (2/lr)")
+    axes[4].set_xlabel("step")
+    axes[4].legend()
 
     fig.tight_layout()
     fig.savefig(out_png, dpi=150)
@@ -348,16 +455,22 @@ def parse_args():
     p.add_argument("--csv", type=str, default="sudoku.csv", help="Path to kaggle sudoku.csv")
     p.add_argument("--epochs", type=int, default=5)
     p.add_argument("--batch-size", type=int, default=256)
+
+    # optimization + LR
+    p.add_argument("--optim", type=str, default="sgd", choices=["sgd", "adam"])
     p.add_argument("--lr", type=float, default=0.1)
-    p.add_argument("--optim", type=str, default="sgd",
-               choices=["sgd", "adam"])
     p.add_argument("--lr_type", type=str, default="constant",
-               choices=["constant", "step", "exponential", "polynomial"])
+                   choices=["constant", "step", "exponential", "polynomial"])
     p.add_argument("--lr_gamma", type=float, default=1.0)
-    p.add_argument("--beta1", type=float, default=0.9)
-    p.add_argument("--beta2", type=float, default=0.999)
-    p.add_argument("--adam_eps", type=float, default=1e-8)
+
+    # SGD / Adam hyperparams
+    p.add_argument("--momentum", type=float, default=0.9, help="momentum for SGD")
+    p.add_argument("--beta1", type=float, default=0.9, help="beta1 for Adam")
+    p.add_argument("--beta2", type=float, default=0.999, help="beta2 for Adam")
+    p.add_argument("--adam_eps", type=float, default=1e-8, help="eps for Adam")
     p.add_argument("--weight_decay", type=float, default=0.0)
+
+    # model + logging
     p.add_argument("--hidden", type=int, default=512)
     p.add_argument("--dropout", type=float, default=0.1)
     p.add_argument("--clip", type=float, default=0.0, help="grad clipping max-norm; 0 disables")
@@ -366,6 +479,10 @@ def parse_args():
     p.add_argument("--cpu", action="store_true")
     p.add_argument("--log-every", type=int, default=50)
     p.add_argument("--sharpness-iters", type=int, default=4, help="power-iter steps for Hessian eig")
+
+    # experiment naming
+    p.add_argument("--run-name", type=str, default="",
+                   help="optional explicit experiment name under experiments/")
     return p.parse_args()
 
 
