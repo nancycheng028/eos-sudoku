@@ -214,17 +214,25 @@ def train(args):
     val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, num_workers=2, pin_memory=(device=="cuda"))
 
     model = CellMLP(hidden=args.hidden, dropout=args.dropout).to(device)
-    opt = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0)
-    # Documentation for StepLR is here: https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.StepLR.html
-    # There exist other classes to do other LR behaviors: LinearLR, ExponentialLR, etc. 
-    if args.lr_type == 'constant':
-        pass
-    elif args.lr_type == 'step':
-        scheduler = StepLR(opt, step_size=1, gamma=args.lr_gamma)
-    elif args.lr_type == 'exponential':
-        scheduler = ExponentialLR(opt, gamma=args.lr_gamma)
-    elif args.lr_type == 'polynomial':
-        scheduler = PolynomialLR(opt, total_iters=args.epochs + 1, power=args.lr_gamma)
+
+    # ---- Optimizer ----
+    if args.optim == "sgd":
+        opt = torch.optim.SGD(
+            model.parameters(),
+            lr=args.lr,
+            momentum=0.9,
+            weight_decay=args.weight_decay,
+        )
+    elif args.optim == "adam":
+        opt = torch.optim.Adam(
+            model.parameters(),
+            lr=args.lr,
+            betas=(args.beta1, args.beta2),
+            eps=args.adam_eps,
+            weight_decay=args.weight_decay,
+        )
+    else:
+        raise ValueError(f"Unknown optimizer: {args.optim}")
 
     history = History(step=[], lrs=[], eos_threshold=[], loss=[], acc=[], grad_norm=[], sharpness=[])
     step = 0
@@ -341,8 +349,15 @@ def parse_args():
     p.add_argument("--epochs", type=int, default=5)
     p.add_argument("--batch-size", type=int, default=256)
     p.add_argument("--lr", type=float, default=0.1)
-    p.add_argument("--lr_type", type=str, default="constant")
-    p.add_argument("--lr_gamma", type=float, default=1)
+    p.add_argument("--optim", type=str, default="sgd",
+               choices=["sgd", "adam"])
+    p.add_argument("--lr_type", type=str, default="constant",
+               choices=["constant", "step", "exponential", "polynomial"])
+    p.add_argument("--lr_gamma", type=float, default=1.0)
+    p.add_argument("--beta1", type=float, default=0.9)
+    p.add_argument("--beta2", type=float, default=0.999)
+    p.add_argument("--adam_eps", type=float, default=1e-8)
+    p.add_argument("--weight_decay", type=float, default=0.0)
     p.add_argument("--hidden", type=int, default=512)
     p.add_argument("--dropout", type=float, default=0.1)
     p.add_argument("--clip", type=float, default=0.0, help="grad clipping max-norm; 0 disables")
