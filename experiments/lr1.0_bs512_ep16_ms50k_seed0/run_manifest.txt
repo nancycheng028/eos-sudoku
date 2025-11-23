@@ -1,0 +1,1 @@
+command: sudoku_eos_baseline.py --optim sgd --lr 1.0 --epochs 16 --batch-size 512 --max-samples 50000 --run-name lr1.0_bs512_ep16_ms50k_seed0
