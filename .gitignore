@@ -15,9 +15,6 @@ checkpoints/
 *.pt
 *.bin
 wandb/
-logs/*.out
-*.png
-*.csv
 
 # OS/editor
 .DS_Store

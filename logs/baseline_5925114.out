@@ -1,0 +1,24 @@
+CUDA: True NVIDIA H200
+CWD: /orcd/home/002/cheng028/eos-sudoku
+CSV exists: True
+[ep 01 | step 000000] loss=2.1985 acc=0.1133 grad=0.02 sharp=0.03 thresh=20.00
+[ep 01 | step 000050] loss=2.1978 acc=0.1155 grad=0.02 sharp=0.03 thresh=20.00
+[ep 01 | step 000100] loss=2.1973 acc=0.1132 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 01] loss=2.1973 acc=0.1132
+[ep 02 | step 000150] loss=2.1971 acc=0.1121 grad=0.02 sharp=0.03 thresh=20.00
+[ep 02 | step 000200] loss=2.1971 acc=0.1167 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 02] loss=2.1969 acc=0.1160
+[ep 03 | step 000250] loss=2.1967 acc=0.1212 grad=0.02 sharp=0.03 thresh=20.00
+[ep 03 | step 000300] loss=2.1964 acc=0.1155 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 03] loss=2.1965 acc=0.1189
+[ep 04 | step 000350] loss=2.1960 acc=0.1220 grad=0.02 sharp=0.03 thresh=20.00
+[ep 04 | step 000400] loss=2.1957 acc=0.1200 grad=0.02 sharp=0.04 thresh=20.00
+[val ep 04] loss=2.1960 acc=0.1224
+[ep 05 | step 000450] loss=2.1954 acc=0.1244 grad=0.02 sharp=0.04 thresh=20.00
+[ep 05 | step 000500] loss=2.1951 acc=0.1285 grad=0.02 sharp=0.04 thresh=20.00
+[val ep 05] loss=2.1953 acc=0.1265
+[ep 06 | step 000550] loss=2.1941 acc=0.1284 grad=0.02 sharp=0.04 thresh=20.00
+[ep 06 | step 000600] loss=2.1942 acc=0.1279 grad=0.02 sharp=0.05 thresh=20.00
+[val ep 06] loss=2.1942 acc=0.1311
+[done] wrote /orcd/home/002/cheng028/eos-sudoku/sudoku_eos_checkpoint.pth
+[done] wrote eos_analysis.png

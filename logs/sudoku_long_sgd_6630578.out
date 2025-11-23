@@ -1,0 +1,366 @@
+>>> --optim sgd --lr 0.10 --epochs 60 --batch-size 512 --max-samples 50000 --run-name lr0.10_bs512_ep60_ms50k_seed0
+[run] saving outputs under /orcd/home/002/cheng028/eos-sudoku/experiments/lr0.10_bs512_ep60_ms50k_seed0
+[ep 01 | step 000000] lr=0.1000 loss=2.1985 acc=0.1069 grad=0.02 sharp=0.04 thresh=20.00
+[ep 01 | step 000050] lr=0.1000 loss=2.1975 acc=0.1125 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 01] loss=2.1973 acc=0.1128
+[ep 02 | step 000100] lr=0.1000 loss=2.1972 acc=0.1142 grad=0.02 sharp=0.03 thresh=20.00
+[ep 02 | step 000150] lr=0.1000 loss=2.1972 acc=0.1160 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 02] loss=2.1970 acc=0.1147
+[ep 03 | step 000200] lr=0.1000 loss=2.1968 acc=0.1168 grad=0.02 sharp=0.03 thresh=20.00
+[ep 03 | step 000250] lr=0.1000 loss=2.1967 acc=0.1162 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 03] loss=2.1967 acc=0.1178
+[ep 04 | step 000300] lr=0.1000 loss=2.1963 acc=0.1218 grad=0.02 sharp=0.03 thresh=20.00
+[ep 04 | step 000350] lr=0.1000 loss=2.1961 acc=0.1209 grad=0.02 sharp=0.03 thresh=20.00
+[val ep 04] loss=2.1963 acc=0.1202
+[ep 05 | step 000400] lr=0.1000 loss=2.1957 acc=0.1252 grad=0.02 sharp=0.04 thresh=20.00
+[val ep 05] loss=2.1959 acc=0.1223
+[ep 06 | step 000450] lr=0.1000 loss=2.1954 acc=0.1227 grad=0.02 sharp=0.04 thresh=20.00
+[ep 06 | step 000500] lr=0.1000 loss=2.1948 acc=0.1269 grad=0.02 sharp=0.04 thresh=20.00
+[val ep 06] loss=2.1953 acc=0.1252
+[ep 07 | step 000550] lr=0.1000 loss=2.1942 acc=0.1283 grad=0.02 sharp=0.04 thresh=20.00
+[ep 07 | step 000600] lr=0.1000 loss=2.1936 acc=0.1314 grad=0.03 sharp=0.05 thresh=20.00
+[val ep 07] loss=2.1944 acc=0.1294
+[ep 08 | step 000650] lr=0.1000 loss=2.1927 acc=0.1347 grad=0.03 sharp=0.05 thresh=20.00
+[ep 08 | step 000700] lr=0.1000 loss=2.1927 acc=0.1327 grad=0.03 sharp=0.06 thresh=20.00
+[val ep 08] loss=2.1933 acc=0.1343
+[ep 09 | step 000750] lr=0.1000 loss=2.1915 acc=0.1374 grad=0.03 sharp=0.06 thresh=20.00
+[val ep 09] loss=2.1919 acc=0.1404
+[ep 10 | step 000800] lr=0.1000 loss=2.1904 acc=0.1436 grad=0.03 sharp=0.07 thresh=20.00
+[ep 10 | step 000850] lr=0.1000 loss=2.1895 acc=0.1422 grad=0.03 sharp=0.08 thresh=20.00
+[val ep 10] loss=2.1903 acc=0.1470
+[ep 11 | step 000900] lr=0.1000 loss=2.1886 acc=0.1430 grad=0.04 sharp=0.08 thresh=20.00
+[ep 11 | step 000950] lr=0.1000 loss=2.1884 acc=0.1474 grad=0.04 sharp=0.09 thresh=20.00
+[val ep 11] loss=2.1884 acc=0.1533
+[ep 12 | step 001000] lr=0.1000 loss=2.1866 acc=0.1499 grad=0.04 sharp=0.10 thresh=20.00
+[ep 12 | step 001050] lr=0.1000 loss=2.1853 acc=0.1507 grad=0.04 sharp=0.11 thresh=20.00
+[val ep 12] loss=2.1862 acc=0.1611
+[ep 13 | step 001100] lr=0.1000 loss=2.1842 acc=0.1556 grad=0.04 sharp=0.12 thresh=20.00
+[val ep 13] loss=2.1837 acc=0.1687
+[ep 14 | step 001150] lr=0.1000 loss=2.1820 acc=0.1609 grad=0.04 sharp=0.12 thresh=20.00
+[ep 14 | step 001200] lr=0.1000 loss=2.1810 acc=0.1576 grad=0.05 sharp=0.13 thresh=20.00
+[val ep 14] loss=2.1808 acc=0.1765
+[ep 15 | step 001250] lr=0.1000 loss=2.1792 acc=0.1644 grad=0.05 sharp=0.14 thresh=20.00
+[ep 15 | step 001300] lr=0.1000 loss=2.1768 acc=0.1719 grad=0.05 sharp=0.15 thresh=20.00
+[val ep 15] loss=2.1776 acc=0.1867
+[ep 16 | step 001350] lr=0.1000 loss=2.1740 acc=0.1741 grad=0.05 sharp=0.17 thresh=20.00
+[ep 16 | step 001400] lr=0.1000 loss=2.1729 acc=0.1807 grad=0.05 sharp=0.18 thresh=20.00
+[val ep 16] loss=2.1738 acc=0.1961
+[ep 17 | step 001450] lr=0.1000 loss=2.1695 acc=0.1862 grad=0.05 sharp=0.19 thresh=20.00
+[val ep 17] loss=2.1697 acc=0.2043
+[ep 18 | step 001500] lr=0.1000 loss=2.1670 acc=0.1876 grad=0.06 sharp=0.21 thresh=20.00
+[ep 18 | step 001550] lr=0.1000 loss=2.1632 acc=0.1965 grad=0.06 sharp=0.25 thresh=20.00
+[val ep 18] loss=2.1647 acc=0.2145
+[ep 19 | step 001600] lr=0.1000 loss=2.1606 acc=0.1985 grad=0.06 sharp=0.26 thresh=20.00
+[ep 19 | step 001650] lr=0.1000 loss=2.1578 acc=0.2004 grad=0.06 sharp=0.23 thresh=20.00
+[val ep 19] loss=2.1589 acc=0.2234
+[ep 20 | step 001700] lr=0.1000 loss=2.1533 acc=0.2066 grad=0.06 sharp=0.34 thresh=20.00
+[ep 20 | step 001750] lr=0.1000 loss=2.1504 acc=0.2105 grad=0.06 sharp=0.34 thresh=20.00
+[val ep 20] loss=2.1520 acc=0.2354
+[ep 21 | step 001800] lr=0.1000 loss=2.1461 acc=0.2156 grad=0.07 sharp=0.35 thresh=20.00
+[val ep 21] loss=2.1440 acc=0.2415
+[ep 22 | step 001850] lr=0.1000 loss=2.1378 acc=0.2284 grad=0.07 sharp=0.38 thresh=20.00
+[ep 22 | step 001900] lr=0.1000 loss=2.1348 acc=0.2230 grad=0.07 sharp=0.43 thresh=20.00
+[val ep 22] loss=2.1345 acc=0.2518
+[ep 23 | step 001950] lr=0.1000 loss=2.1296 acc=0.2266 grad=0.08 sharp=0.43 thresh=20.00
+[ep 23 | step 002000] lr=0.1000 loss=2.1217 acc=0.2358 grad=0.07 sharp=0.57 thresh=20.00
+[val ep 23] loss=2.1230 acc=0.2628
+[ep 24 | step 002050] lr=0.1000 loss=2.1161 acc=0.2383 grad=0.08 sharp=0.61 thresh=20.00
+[ep 24 | step 002100] lr=0.1000 loss=2.1102 acc=0.2428 grad=0.08 sharp=0.78 thresh=20.00
+[val ep 24] loss=2.1099 acc=0.2696
+[ep 25 | step 002150] lr=0.1000 loss=2.1010 acc=0.2445 grad=0.08 sharp=0.76 thresh=20.00
+[val ep 25] loss=2.0945 acc=0.2771
+[ep 26 | step 002200] lr=0.1000 loss=2.0918 acc=0.2519 grad=0.09 sharp=0.93 thresh=20.00
+[ep 26 | step 002250] lr=0.1000 loss=2.0816 acc=0.2558 grad=0.09 sharp=0.94 thresh=20.00
+[val ep 26] loss=2.0770 acc=0.2830
+[ep 27 | step 002300] lr=0.1000 loss=2.0697 acc=0.2600 grad=0.09 sharp=1.16 thresh=20.00
+[ep 27 | step 002350] lr=0.1000 loss=2.0592 acc=0.2612 grad=0.10 sharp=1.09 thresh=20.00
+[val ep 27] loss=2.0571 acc=0.2897
+[ep 28 | step 002400] lr=0.1000 loss=2.0503 acc=0.2719 grad=0.10 sharp=1.23 thresh=20.00
+[ep 28 | step 002450] lr=0.1000 loss=2.0383 acc=0.2675 grad=0.10 sharp=1.51 thresh=20.00
+[val ep 28] loss=2.0354 acc=0.2952
+[ep 29 | step 002500] lr=0.1000 loss=2.0226 acc=0.2793 grad=0.11 sharp=1.64 thresh=20.00
+[ep 29 | step 002550] lr=0.1000 loss=2.0107 acc=0.2840 grad=0.11 sharp=1.43 thresh=20.00
+[val ep 29] loss=2.0122 acc=0.3009
+[ep 30 | step 002600] lr=0.1000 loss=1.9977 acc=0.2873 grad=0.11 sharp=1.72 thresh=20.00
+[val ep 30] loss=1.9874 acc=0.3074
+[ep 31 | step 002650] lr=0.1000 loss=1.9839 acc=0.2933 grad=0.11 sharp=1.88 thresh=20.00
+[ep 31 | step 002700] lr=0.1000 loss=1.9674 acc=0.2935 grad=0.11 sharp=1.64 thresh=20.00
+[val ep 31] loss=1.9625 acc=0.3145
+[ep 32 | step 002750] lr=0.1000 loss=1.9554 acc=0.2998 grad=0.12 sharp=1.95 thresh=20.00
+[ep 32 | step 002800] lr=0.1000 loss=1.9431 acc=0.3014 grad=0.12 sharp=1.99 thresh=20.00
+[val ep 32] loss=1.9371 acc=0.3213
+[ep 33 | step 002850] lr=0.1000 loss=1.9264 acc=0.3084 grad=0.13 sharp=1.92 thresh=20.00
+[ep 33 | step 002900] lr=0.1000 loss=1.9229 acc=0.3069 grad=0.13 sharp=2.02 thresh=20.00
+[val ep 33] loss=1.9115 acc=0.3292
+[ep 34 | step 002950] lr=0.1000 loss=1.9014 acc=0.3194 grad=0.13 sharp=2.08 thresh=20.00
+[val ep 34] loss=1.8856 acc=0.3368
+[ep 35 | step 003000] lr=0.1000 loss=1.8891 acc=0.3190 grad=0.13 sharp=2.19 thresh=20.00
+[ep 35 | step 003050] lr=0.1000 loss=1.8805 acc=0.3221 grad=0.13 sharp=2.23 thresh=20.00
+[val ep 35] loss=1.8600 acc=0.3451
+[ep 36 | step 003100] lr=0.1000 loss=1.8605 acc=0.3332 grad=0.13 sharp=2.20 thresh=20.00
+[ep 36 | step 003150] lr=0.1000 loss=1.8536 acc=0.3331 grad=0.13 sharp=2.27 thresh=20.00
+[val ep 36] loss=1.8348 acc=0.3535
+[ep 37 | step 003200] lr=0.1000 loss=1.8385 acc=0.3403 grad=0.14 sharp=2.34 thresh=20.00
+[ep 37 | step 003250] lr=0.1000 loss=1.8250 acc=0.3471 grad=0.14 sharp=2.30 thresh=20.00
+[val ep 37] loss=1.8103 acc=0.3610
+[ep 38 | step 003300] lr=0.1000 loss=1.8221 acc=0.3410 grad=0.14 sharp=2.35 thresh=20.00
+[val ep 38] loss=1.7865 acc=0.3695
+[ep 39 | step 003350] lr=0.1000 loss=1.7966 acc=0.3538 grad=0.14 sharp=2.35 thresh=20.00
+[ep 39 | step 003400] lr=0.1000 loss=1.7871 acc=0.3591 grad=0.15 sharp=2.39 thresh=20.00
+[val ep 39] loss=1.7626 acc=0.3780
+[ep 40 | step 003450] lr=0.1000 loss=1.7800 acc=0.3554 grad=0.14 sharp=2.31 thresh=20.00
+[ep 40 | step 003500] lr=0.1000 loss=1.7674 acc=0.3626 grad=0.15 sharp=2.43 thresh=20.00
+[val ep 40] loss=1.7393 acc=0.3858
+[ep 41 | step 003550] lr=0.1000 loss=1.7532 acc=0.3681 grad=0.15 sharp=2.35 thresh=20.00
+[ep 41 | step 003600] lr=0.1000 loss=1.7398 acc=0.3692 grad=0.15 sharp=2.42 thresh=20.00
+[val ep 41] loss=1.7166 acc=0.3943
+[ep 42 | step 003650] lr=0.1000 loss=1.7325 acc=0.3715 grad=0.15 sharp=2.41 thresh=20.00
+[val ep 42] loss=1.6949 acc=0.4022
+[ep 43 | step 003700] lr=0.1000 loss=1.7202 acc=0.3799 grad=0.15 sharp=2.42 thresh=20.00
+[ep 43 | step 003750] lr=0.1000 loss=1.7169 acc=0.3813 grad=0.15 sharp=2.47 thresh=20.00
+[val ep 43] loss=1.6730 acc=0.4102
+[ep 44 | step 003800] lr=0.1000 loss=1.6994 acc=0.3911 grad=0.15 sharp=2.42 thresh=20.00
+[ep 44 | step 003850] lr=0.1000 loss=1.7006 acc=0.3836 grad=0.15 sharp=2.44 thresh=20.00
+[val ep 44] loss=1.6521 acc=0.4176
+[ep 45 | step 003900] lr=0.1000 loss=1.6756 acc=0.3951 grad=0.16 sharp=2.48 thresh=20.00
+[ep 45 | step 003950] lr=0.1000 loss=1.6682 acc=0.3979 grad=0.16 sharp=2.45 thresh=20.00
+[val ep 45] loss=1.6323 acc=0.4243
+[ep 46 | step 004000] lr=0.1000 loss=1.6555 acc=0.4055 grad=0.16 sharp=2.48 thresh=20.00
+[val ep 46] loss=1.6118 acc=0.4320
+[ep 47 | step 004050] lr=0.1000 loss=1.6454 acc=0.4070 grad=0.16 sharp=2.47 thresh=20.00
+[ep 47 | step 004100] lr=0.1000 loss=1.6373 acc=0.4093 grad=0.16 sharp=2.47 thresh=20.00
+[val ep 47] loss=1.5920 acc=0.4389
+[ep 48 | step 004150] lr=0.1000 loss=1.6252 acc=0.4167 grad=0.16 sharp=2.48 thresh=20.00
+[ep 48 | step 004200] lr=0.1000 loss=1.6245 acc=0.4123 grad=0.16 sharp=2.45 thresh=20.00
+[val ep 48] loss=1.5730 acc=0.4457
+[ep 49 | step 004250] lr=0.1000 loss=1.6060 acc=0.4204 grad=0.17 sharp=2.49 thresh=20.00
+[ep 49 | step 004300] lr=0.1000 loss=1.6078 acc=0.4191 grad=0.16 sharp=2.48 thresh=20.00
+[val ep 49] loss=1.5539 acc=0.4528
+[ep 50 | step 004350] lr=0.1000 loss=1.5935 acc=0.4228 grad=0.16 sharp=2.49 thresh=20.00
+[val ep 50] loss=1.5358 acc=0.4583
+[ep 51 | step 004400] lr=0.1000 loss=1.5827 acc=0.4313 grad=0.17 sharp=2.47 thresh=20.00
+[ep 51 | step 004450] lr=0.1000 loss=1.5793 acc=0.4323 grad=0.17 sharp=2.47 thresh=20.00
+[val ep 51] loss=1.5176 acc=0.4657
+[ep 52 | step 004500] lr=0.1000 loss=1.5702 acc=0.4349 grad=0.17 sharp=2.49 thresh=20.00
+[ep 52 | step 004550] lr=0.1000 loss=1.5584 acc=0.4392 grad=0.17 sharp=2.51 thresh=20.00
+[val ep 52] loss=1.5001 acc=0.4717
+[ep 53 | step 004600] lr=0.1000 loss=1.5556 acc=0.4386 grad=0.17 sharp=2.53 thresh=20.00
+[ep 53 | step 004650] lr=0.1000 loss=1.5502 acc=0.4407 grad=0.17 sharp=2.47 thresh=20.00
+[val ep 53] loss=1.4835 acc=0.4779
+[ep 54 | step 004700] lr=0.1000 loss=1.5356 acc=0.4450 grad=0.17 sharp=2.51 thresh=20.00
+[ep 54 | step 004750] lr=0.1000 loss=1.5262 acc=0.4531 grad=0.17 sharp=2.47 thresh=20.00
+[val ep 54] loss=1.4668 acc=0.4835
+[ep 55 | step 004800] lr=0.1000 loss=1.5196 acc=0.4540 grad=0.18 sharp=2.50 thresh=20.00
+[val ep 55] loss=1.4506 acc=0.4892
+[ep 56 | step 004850] lr=0.1000 loss=1.5049 acc=0.4581 grad=0.18 sharp=2.53 thresh=20.00
+[ep 56 | step 004900] lr=0.1000 loss=1.5069 acc=0.4549 grad=0.17 sharp=2.52 thresh=20.00
+[val ep 56] loss=1.4343 acc=0.4951
+[ep 57 | step 004950] lr=0.1000 loss=1.4993 acc=0.4580 grad=0.18 sharp=2.55 thresh=20.00
+[ep 57 | step 005000] lr=0.1000 loss=1.5005 acc=0.4533 grad=0.18 sharp=2.51 thresh=20.00
+[val ep 57] loss=1.4198 acc=0.4996
+[ep 58 | step 005050] lr=0.1000 loss=1.4822 acc=0.4649 grad=0.18 sharp=2.48 thresh=20.00
+[ep 58 | step 005100] lr=0.1000 loss=1.4831 acc=0.4598 grad=0.18 sharp=2.54 thresh=20.00
+[val ep 58] loss=1.4057 acc=0.5054
+[ep 59 | step 005150] lr=0.1000 loss=1.4795 acc=0.4642 grad=0.18 sharp=2.54 thresh=20.00
+[val ep 59] loss=1.3911 acc=0.5098
+[ep 60 | step 005200] lr=0.1000 loss=1.4584 acc=0.4740 grad=0.18 sharp=2.58 thresh=20.00
+[ep 60 | step 005250] lr=0.1000 loss=1.4635 acc=0.4714 grad=0.18 sharp=2.60 thresh=20.00
+[val ep 60] loss=1.3776 acc=0.5151
+[done] wrote /orcd/home/002/cheng028/eos-sudoku/experiments/lr0.10_bs512_ep60_ms50k_seed0/checkpoint_seed_0.pth
+[done] wrote experiments/lr0.10_bs512_ep60_ms50k_seed0/eos_analysis.png
+>>> --optim sgd --lr 0.5 --epochs 16 --batch-size 512 --max-samples 50000 --run-name lr0.5_bs512_ep16_ms50k_seed0
+[run] saving outputs under /orcd/home/002/cheng028/eos-sudoku/experiments/lr0.5_bs512_ep16_ms50k_seed0
+[ep 01 | step 000000] lr=0.5000 loss=2.1985 acc=0.1069 grad=0.02 sharp=0.04 thresh=4.00
+[ep 01 | step 000050] lr=0.5000 loss=2.1970 acc=0.1153 grad=0.02 sharp=0.03 thresh=4.00
+[val ep 01] loss=2.1965 acc=0.1190
+[ep 02 | step 000100] lr=0.5000 loss=2.1957 acc=0.1226 grad=0.02 sharp=0.03 thresh=4.00
+[ep 02 | step 000150] lr=0.5000 loss=2.1947 acc=0.1282 grad=0.02 sharp=0.04 thresh=4.00
+[val ep 02] loss=2.1935 acc=0.1331
+[ep 03 | step 000200] lr=0.5000 loss=2.1909 acc=0.1411 grad=0.03 sharp=0.07 thresh=4.00
+[ep 03 | step 000250] lr=0.5000 loss=2.1877 acc=0.1460 grad=0.04 sharp=0.09 thresh=4.00
+[val ep 03] loss=2.1863 acc=0.1540
+[ep 04 | step 000300] lr=0.5000 loss=2.1804 acc=0.1604 grad=0.05 sharp=0.13 thresh=4.00
+[ep 04 | step 000350] lr=0.5000 loss=2.1723 acc=0.1726 grad=0.05 sharp=0.17 thresh=4.00
+[val ep 04] loss=2.1718 acc=0.1835
+[ep 05 | step 000400] lr=0.5000 loss=2.1572 acc=0.1971 grad=0.06 sharp=0.26 thresh=4.00
+[val ep 05] loss=2.1418 acc=0.2297
+[ep 06 | step 000450] lr=0.5000 loss=2.1332 acc=0.2199 grad=0.07 sharp=0.45 thresh=4.00
+[ep 06 | step 000500] lr=0.5000 loss=2.1011 acc=0.2348 grad=0.09 sharp=0.80 thresh=4.00
+[val ep 06] loss=2.0774 acc=0.2695
+[ep 07 | step 000550] lr=0.5000 loss=2.0515 acc=0.2609 grad=0.11 sharp=1.33 thresh=4.00
+[ep 07 | step 000600] lr=0.5000 loss=1.9961 acc=0.2814 grad=0.12 sharp=1.80 thresh=4.00
+[val ep 07] loss=1.9738 acc=0.3005
+[ep 08 | step 000650] lr=0.5000 loss=1.9347 acc=0.3026 grad=0.15 sharp=2.11 thresh=4.00
+[ep 08 | step 000700] lr=0.5000 loss=1.8780 acc=0.3244 grad=0.16 sharp=2.21 thresh=4.00
+[val ep 08] loss=1.8593 acc=0.3382
+[ep 09 | step 000750] lr=0.5000 loss=1.8226 acc=0.3384 grad=0.19 sharp=2.35 thresh=4.00
+[val ep 09] loss=1.7516 acc=0.3768
+[ep 10 | step 000800] lr=0.5000 loss=1.7596 acc=0.3649 grad=0.18 sharp=2.39 thresh=4.00
+[ep 10 | step 000850] lr=0.5000 loss=1.7148 acc=0.3810 grad=0.18 sharp=2.41 thresh=4.00
+[val ep 10] loss=1.6529 acc=0.4130
+[ep 11 | step 000900] lr=0.5000 loss=1.6628 acc=0.4002 grad=0.19 sharp=2.38 thresh=4.00
+[ep 11 | step 000950] lr=0.5000 loss=1.6419 acc=0.4055 grad=0.20 sharp=2.43 thresh=4.00
+[val ep 11] loss=1.5663 acc=0.4442
+[ep 12 | step 001000] lr=0.5000 loss=1.5887 acc=0.4273 grad=0.21 sharp=2.39 thresh=4.00
+[ep 12 | step 001050] lr=0.5000 loss=1.5654 acc=0.4319 grad=0.24 sharp=2.46 thresh=4.00
+[val ep 12] loss=1.4888 acc=0.4724
+[ep 13 | step 001100] lr=0.5000 loss=1.5290 acc=0.4459 grad=0.22 sharp=2.42 thresh=4.00
+[val ep 13] loss=1.4195 acc=0.4973
+[ep 14 | step 001150] lr=0.5000 loss=1.4768 acc=0.4659 grad=0.23 sharp=2.53 thresh=4.00
+[ep 14 | step 001200] lr=0.5000 loss=1.4779 acc=0.4615 grad=0.26 sharp=2.47 thresh=4.00
+[val ep 14] loss=1.3696 acc=0.5133
+[ep 15 | step 001250] lr=0.5000 loss=1.4434 acc=0.4774 grad=0.25 sharp=2.55 thresh=4.00
+[ep 15 | step 001300] lr=0.5000 loss=1.4313 acc=0.4754 grad=0.25 sharp=2.51 thresh=4.00
+[val ep 15] loss=1.3222 acc=0.5288
+[ep 16 | step 001350] lr=0.5000 loss=1.4035 acc=0.4866 grad=0.26 sharp=2.55 thresh=4.00
+[ep 16 | step 001400] lr=0.5000 loss=1.4039 acc=0.4839 grad=0.26 sharp=2.52 thresh=4.00
+[val ep 16] loss=1.2937 acc=0.5358
+[done] wrote /orcd/home/002/cheng028/eos-sudoku/experiments/lr0.5_bs512_ep16_ms50k_seed0/checkpoint_seed_0.pth
+[done] wrote experiments/lr0.5_bs512_ep16_ms50k_seed0/eos_analysis.png
+>>> --optim sgd --lr 1.0 --epochs 16 --batch-size 512 --max-samples 50000 --run-name lr1.0_bs512_ep16_ms50k_seed0
+[run] saving outputs under /orcd/home/002/cheng028/eos-sudoku/experiments/lr1.0_bs512_ep16_ms50k_seed0
+[ep 01 | step 000000] lr=1.0000 loss=2.1985 acc=0.1069 grad=0.02 sharp=0.04 thresh=2.00
+[ep 01 | step 000050] lr=1.0000 loss=2.1967 acc=0.1154 grad=0.02 sharp=0.03 thresh=2.00
+[val ep 01] loss=2.1953 acc=0.1251
+[ep 02 | step 000100] lr=1.0000 loss=2.1935 acc=0.1312 grad=0.02 sharp=0.05 thresh=2.00
+[ep 02 | step 000150] lr=1.0000 loss=2.1888 acc=0.1442 grad=0.04 sharp=0.08 thresh=2.00
+[val ep 02] loss=2.1835 acc=0.1559
+[ep 03 | step 000200] lr=1.0000 loss=2.1743 acc=0.1696 grad=0.05 sharp=0.17 thresh=2.00
+[ep 03 | step 000250] lr=1.0000 loss=2.1490 acc=0.1973 grad=0.07 sharp=0.36 thresh=2.00
+[val ep 03] loss=2.1365 acc=0.2257
+[ep 04 | step 000300] lr=1.0000 loss=2.0883 acc=0.2396 grad=0.10 sharp=0.80 thresh=2.00
+[ep 04 | step 000350] lr=1.0000 loss=2.0025 acc=0.2661 grad=0.15 sharp=1.67 thresh=2.00
+[val ep 04] loss=1.9845 acc=0.2863
+[ep 05 | step 000400] lr=1.0000 loss=1.8913 acc=0.3134 grad=0.18 sharp=2.23 thresh=2.00
+[val ep 05] loss=1.7924 acc=0.3586
+[ep 06 | step 000450] lr=1.0000 loss=1.7882 acc=0.3454 grad=0.23 sharp=2.23 thresh=2.00
+[ep 06 | step 000500] lr=1.0000 loss=1.7256 acc=0.3732 grad=0.24 sharp=2.29 thresh=2.00
+[val ep 06] loss=1.6294 acc=0.4182
+[ep 07 | step 000550] lr=1.0000 loss=1.6355 acc=0.4045 grad=0.25 sharp=2.32 thresh=2.00
+[ep 07 | step 000600] lr=1.0000 loss=1.5943 acc=0.4240 grad=0.28 sharp=2.31 thresh=2.00
+[val ep 07] loss=1.5050 acc=0.4616
+[ep 08 | step 000650] lr=1.0000 loss=1.5386 acc=0.4341 grad=0.30 sharp=2.41 thresh=2.00
+[ep 08 | step 000700] lr=1.0000 loss=1.5041 acc=0.4494 grad=0.31 sharp=2.37 thresh=2.00
+[val ep 08] loss=1.4048 acc=0.4955
+[ep 09 | step 000750] lr=1.0000 loss=1.4745 acc=0.4605 grad=0.32 sharp=2.41 thresh=2.00
+[val ep 09] loss=1.3490 acc=0.5135
+[ep 10 | step 000800] lr=1.0000 loss=1.4266 acc=0.4779 grad=0.32 sharp=2.43 thresh=2.00
+[ep 10 | step 000850] lr=1.0000 loss=1.4298 acc=0.4755 grad=0.31 sharp=2.35 thresh=2.00
+[val ep 10] loss=1.3134 acc=0.5247
+[ep 11 | step 000900] lr=1.0000 loss=1.3972 acc=0.4847 grad=0.34 sharp=2.43 thresh=2.00
+[ep 11 | step 000950] lr=1.0000 loss=1.4157 acc=0.4796 grad=0.33 sharp=2.32 thresh=2.00
+[val ep 11] loss=1.2800 acc=0.5339
+[ep 12 | step 001000] lr=1.0000 loss=1.3855 acc=0.4885 grad=0.37 sharp=2.35 thresh=2.00
+[ep 12 | step 001050] lr=1.0000 loss=1.3941 acc=0.4818 grad=0.35 sharp=2.30 thresh=2.00
+[val ep 12] loss=1.2565 acc=0.5396
+[ep 13 | step 001100] lr=1.0000 loss=1.3649 acc=0.4917 grad=0.35 sharp=2.36 thresh=2.00
+[val ep 13] loss=1.2218 acc=0.5486
+[ep 14 | step 001150] lr=1.0000 loss=1.3196 acc=0.5064 grad=0.37 sharp=2.51 thresh=2.00
+[ep 14 | step 001200] lr=1.0000 loss=1.3437 acc=0.4972 grad=0.37 sharp=2.41 thresh=2.00
+[val ep 14] loss=1.1951 acc=0.5565
+[ep 15 | step 001250] lr=1.0000 loss=1.3106 acc=0.5085 grad=0.36 sharp=2.44 thresh=2.00
+[ep 15 | step 001300] lr=1.0000 loss=1.3306 acc=0.5000 grad=0.37 sharp=2.43 thresh=2.00
+[val ep 15] loss=1.1786 acc=0.5566
+[ep 16 | step 001350] lr=1.0000 loss=1.2951 acc=0.5067 grad=0.35 sharp=2.43 thresh=2.00
+[ep 16 | step 001400] lr=1.0000 loss=1.3167 acc=0.4993 grad=0.37 sharp=2.36 thresh=2.00
+[val ep 16] loss=1.1659 acc=0.5611
+[done] wrote /orcd/home/002/cheng028/eos-sudoku/experiments/lr1.0_bs512_ep16_ms50k_seed0/checkpoint_seed_0.pth
+[done] wrote experiments/lr1.0_bs512_ep16_ms50k_seed0/eos_analysis.png
+>>> --optim sgd --lr 1.0 --lr_type step --lr_gamma 0.5 --epochs 16 --batch-size 512 --max-samples 50000 --run-name lr1.0_step_g0.5_bs512_ep16_ms50k_seed0
+[run] saving outputs under /orcd/home/002/cheng028/eos-sudoku/experiments/lr1.0_step_g0.5_bs512_ep16_ms50k_seed0
+[ep 01 | step 000000] lr=1.0000 loss=2.1985 acc=0.1069 grad=0.02 sharp=0.04 thresh=2.00
+[ep 01 | step 000050] lr=1.0000 loss=2.1967 acc=0.1154 grad=0.02 sharp=0.03 thresh=2.00
+[val ep 01] loss=2.1953 acc=0.1251
+[ep 02 | step 000100] lr=0.5000 loss=2.1937 acc=0.1316 grad=0.02 sharp=0.04 thresh=4.00
+[ep 02 | step 000150] lr=0.5000 loss=2.1919 acc=0.1388 grad=0.03 sharp=0.06 thresh=4.00
+[val ep 02] loss=2.1899 acc=0.1439
+[ep 03 | step 000200] lr=0.2500 loss=2.1874 acc=0.1500 grad=0.04 sharp=0.09 thresh=8.00
+[ep 03 | step 000250] lr=0.2500 loss=2.1852 acc=0.1490 grad=0.04 sharp=0.10 thresh=8.00
+[val ep 03] loss=2.1850 acc=0.1629
+[ep 04 | step 000300] lr=0.1250 loss=2.1823 acc=0.1598 grad=0.04 sharp=0.12 thresh=16.00
+[ep 04 | step 000350] lr=0.1250 loss=2.1805 acc=0.1638 grad=0.04 sharp=0.13 thresh=16.00
+[val ep 04] loss=2.1814 acc=0.1762
+[ep 05 | step 000400] lr=0.0625 loss=2.1789 acc=0.1689 grad=0.05 sharp=0.14 thresh=32.00
+[val ep 05] loss=2.1793 acc=0.1849
+[ep 06 | step 000450] lr=0.0312 loss=2.1775 acc=0.1729 grad=0.05 sharp=0.15 thresh=64.00
+[ep 06 | step 000500] lr=0.0312 loss=2.1765 acc=0.1739 grad=0.05 sharp=0.16 thresh=64.00
+[val ep 06] loss=2.1782 acc=0.1887
+[ep 07 | step 000550] lr=0.0156 loss=2.1756 acc=0.1775 grad=0.05 sharp=0.15 thresh=128.00
+[ep 07 | step 000600] lr=0.0156 loss=2.1748 acc=0.1780 grad=0.05 sharp=0.16 thresh=128.00
+[val ep 07] loss=2.1777 acc=0.1911
+[ep 08 | step 000650] lr=0.0078 loss=2.1743 acc=0.1805 grad=0.05 sharp=0.16 thresh=256.00
+[ep 08 | step 000700] lr=0.0078 loss=2.1749 acc=0.1761 grad=0.05 sharp=0.16 thresh=256.00
+[val ep 08] loss=2.1774 acc=0.1918
+[ep 09 | step 000750] lr=0.0039 loss=2.1747 acc=0.1781 grad=0.05 sharp=0.17 thresh=512.00
+[val ep 09] loss=2.1773 acc=0.1919
+[ep 10 | step 000800] lr=0.0020 loss=2.1748 acc=0.1772 grad=0.05 sharp=0.17 thresh=1024.00
+[ep 10 | step 000850] lr=0.0020 loss=2.1740 acc=0.1811 grad=0.05 sharp=0.17 thresh=1024.00
+[val ep 10] loss=2.1772 acc=0.1921
+[ep 11 | step 000900] lr=0.0010 loss=2.1745 acc=0.1768 grad=0.05 sharp=0.17 thresh=2048.00
+[ep 11 | step 000950] lr=0.0010 loss=2.1761 acc=0.1745 grad=0.05 sharp=0.18 thresh=2048.00
+[val ep 11] loss=2.1772 acc=0.1922
+[ep 12 | step 001000] lr=0.0005 loss=2.1752 acc=0.1743 grad=0.05 sharp=0.16 thresh=4096.00
+[ep 12 | step 001050] lr=0.0005 loss=2.1748 acc=0.1776 grad=0.05 sharp=0.16 thresh=4096.00
+[val ep 12] loss=2.1771 acc=0.1922
+[ep 13 | step 001100] lr=0.0002 loss=2.1758 acc=0.1760 grad=0.05 sharp=0.15 thresh=8192.00
+[val ep 13] loss=2.1771 acc=0.1922
+[ep 14 | step 001150] lr=0.0001 loss=2.1753 acc=0.1766 grad=0.05 sharp=0.16 thresh=16384.00
+[ep 14 | step 001200] lr=0.0001 loss=2.1756 acc=0.1748 grad=0.05 sharp=0.15 thresh=16384.00
+[val ep 14] loss=2.1771 acc=0.1922
+[ep 15 | step 001250] lr=0.0001 loss=2.1758 acc=0.1717 grad=0.05 sharp=0.16 thresh=32768.00
+[ep 15 | step 001300] lr=0.0001 loss=2.1750 acc=0.1771 grad=0.05 sharp=0.16 thresh=32768.00
+[val ep 15] loss=2.1771 acc=0.1922
+[ep 16 | step 001350] lr=0.0000 loss=2.1747 acc=0.1763 grad=0.05 sharp=0.16 thresh=65536.00
+[ep 16 | step 001400] lr=0.0000 loss=2.1755 acc=0.1764 grad=0.05 sharp=0.16 thresh=65536.00
+[val ep 16] loss=2.1771 acc=0.1922
+[done] wrote /orcd/home/002/cheng028/eos-sudoku/experiments/lr1.0_step_g0.5_bs512_ep16_ms50k_seed0/checkpoint_seed_0.pth
+[done] wrote experiments/lr1.0_step_g0.5_bs512_ep16_ms50k_seed0/eos_analysis.png
+>>> --optim sgd --lr 1.0 --lr_type step --lr_gamma 0.9 --epochs 16 --batch-size 512 --max-samples 50000 --run-name lr1.0_step_g0.9_bs512_ep16_ms50k_seed0
+[run] saving outputs under /orcd/home/002/cheng028/eos-sudoku/experiments/lr1.0_step_g0.9_bs512_ep16_ms50k_seed0
+[ep 01 | step 000000] lr=1.0000 loss=2.1985 acc=0.1069 grad=0.02 sharp=0.04 thresh=2.00
+[ep 01 | step 000050] lr=1.0000 loss=2.1967 acc=0.1154 grad=0.02 sharp=0.03 thresh=2.00
+[val ep 01] loss=2.1953 acc=0.1251
+[ep 02 | step 000100] lr=0.9000 loss=2.1936 acc=0.1314 grad=0.02 sharp=0.05 thresh=2.22
+[ep 02 | step 000150] lr=0.9000 loss=2.1895 acc=0.1424 grad=0.04 sharp=0.08 thresh=2.22
+[val ep 02] loss=2.1850 acc=0.1530
+[ep 03 | step 000200] lr=0.8100 loss=2.1771 acc=0.1673 grad=0.05 sharp=0.15 thresh=2.47
+[ep 03 | step 000250] lr=0.8100 loss=2.1618 acc=0.1850 grad=0.06 sharp=0.24 thresh=2.47
+[val ep 03] loss=2.1539 acc=0.2082
+[ep 04 | step 000300] lr=0.7290 loss=2.1270 acc=0.2184 grad=0.08 sharp=0.47 thresh=2.74
+[ep 04 | step 000350] lr=0.7290 loss=2.0781 acc=0.2443 grad=0.11 sharp=0.92 thresh=2.74
+[val ep 04] loss=2.0707 acc=0.2646
+[ep 05 | step 000400] lr=0.6561 loss=2.0043 acc=0.2736 grad=0.13 sharp=1.74 thresh=3.05
+[val ep 05] loss=1.9357 acc=0.3091
+[ep 06 | step 000450] lr=0.5905 loss=1.9245 acc=0.2984 grad=0.16 sharp=2.08 thresh=3.39
+[ep 06 | step 000500] lr=0.5905 loss=1.8665 acc=0.3215 grad=0.16 sharp=2.30 thresh=3.39
+[val ep 06] loss=1.8080 acc=0.3555
+[ep 07 | step 000550] lr=0.5314 loss=1.7973 acc=0.3486 grad=0.18 sharp=2.29 thresh=3.76
+[ep 07 | step 000600] lr=0.5314 loss=1.7523 acc=0.3634 grad=0.19 sharp=2.39 thresh=3.76
+[val ep 07] loss=1.7030 acc=0.3943
+[ep 08 | step 000650] lr=0.4783 loss=1.7038 acc=0.3813 grad=0.20 sharp=2.39 thresh=4.18
+[ep 08 | step 000700] lr=0.4783 loss=1.6682 acc=0.4006 grad=0.22 sharp=2.39 thresh=4.18
+[val ep 08] loss=1.6159 acc=0.4260
+[ep 09 | step 000750] lr=0.4305 loss=1.6294 acc=0.4112 grad=0.20 sharp=2.48 thresh=4.65
+[val ep 09] loss=1.5431 acc=0.4525
+[ep 10 | step 000800] lr=0.3874 loss=1.5839 acc=0.4265 grad=0.20 sharp=2.46 thresh=5.16
+[ep 10 | step 000850] lr=0.3874 loss=1.5618 acc=0.4345 grad=0.22 sharp=2.48 thresh=5.16
+[val ep 10] loss=1.4808 acc=0.4752
+[ep 11 | step 000900] lr=0.3487 loss=1.5264 acc=0.4503 grad=0.20 sharp=2.44 thresh=5.74
+[ep 11 | step 000950] lr=0.3487 loss=1.5273 acc=0.4467 grad=0.21 sharp=2.48 thresh=5.74
+[val ep 11] loss=1.4317 acc=0.4931
+[ep 12 | step 001000] lr=0.3138 loss=1.4890 acc=0.4583 grad=0.21 sharp=2.48 thresh=6.37
+[ep 12 | step 001050] lr=0.3138 loss=1.4804 acc=0.4608 grad=0.21 sharp=2.55 thresh=6.37
+[val ep 12] loss=1.3904 acc=0.5078
+[ep 13 | step 001100] lr=0.2824 loss=1.4609 acc=0.4671 grad=0.20 sharp=2.51 thresh=7.08
+[val ep 13] loss=1.3558 acc=0.5197
+[ep 14 | step 001150] lr=0.2542 loss=1.4315 acc=0.4803 grad=0.20 sharp=2.59 thresh=7.87
+[ep 14 | step 001200] lr=0.2542 loss=1.4376 acc=0.4757 grad=0.21 sharp=2.56 thresh=7.87
+[val ep 14] loss=1.3331 acc=0.5277
+[ep 15 | step 001250] lr=0.2288 loss=1.4188 acc=0.4843 grad=0.19 sharp=2.55 thresh=8.74
+[ep 15 | step 001300] lr=0.2288 loss=1.4122 acc=0.4832 grad=0.20 sharp=2.53 thresh=8.74
+[val ep 15] loss=1.3095 acc=0.5354
+[ep 16 | step 001350] lr=0.2059 loss=1.3951 acc=0.4918 grad=0.21 sharp=2.56 thresh=9.71
+[ep 16 | step 001400] lr=0.2059 loss=1.3973 acc=0.4880 grad=0.21 sharp=2.54 thresh=9.71
+[val ep 16] loss=1.2917 acc=0.5401
+[done] wrote /orcd/home/002/cheng028/eos-sudoku/experiments/lr1.0_step_g0.9_bs512_ep16_ms50k_seed0/checkpoint_seed_0.pth
+[done] wrote experiments/lr1.0_step_g0.9_bs512_ep16_ms50k_seed0/eos_analysis.png
