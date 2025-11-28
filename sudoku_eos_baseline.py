@@ -26,7 +26,7 @@ import random
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Callable
 
 import numpy as np
 import pandas as pd
@@ -207,6 +207,79 @@ def estimate_top_hessian_eig(model: nn.Module, loss_fn, batch, device: str, iter
     return float(lam)
 
 
+def adam_preconditioner_inverse_for_params(optimizer: torch.optim.Adam, params: List[torch.nn.Parameter]) -> List[torch.Tensor]:
+    """
+    For each param p, return P^{-1} where P is Adam's diagonal preconditioner.
+    Uses PyTorch Adam's state (exp_avg_sq, step, betas, eps).
+
+    P = diag(1 / (sqrt(v_hat) + eps))
+    => P^{-1} = sqrt(v_hat) + eps
+    """
+    group_for_param = {}
+    for group in optimizer.param_groups:
+        for p in group["params"]:
+            group_for_param[p] = group
+
+    P_inv_list = []
+    for p in params:
+        group = group_for_param[p]
+        eps = group["eps"]
+        beta2 = group["betas"][1]
+
+        state = optimizer.state.get(p, {})
+        exp_avg_sq = state.get("exp_avg_sq", None)
+        step = state.get("step", 0)
+
+        if exp_avg_sq is None or step == 0:
+            # State not initialized yet → preconditioner ~ identity
+            P_inv = torch.ones_like(p)
+        else:
+            bias_correction2 = 1.0 - beta2 ** step
+            v_hat = exp_avg_sq / bias_correction2
+            denom = v_hat.sqrt().add(eps)  # sqrt(v_hat) + eps
+            P_inv = denom
+
+        P_inv_list.append(P_inv)
+
+    return P_inv_list
+
+
+def estimate_top_PinvH_eig(model: nn.Module, optimizer: torch.optim.Adam, loss_fn, batch, device: str, iters: int = 5) -> float:
+    """
+    Approximate the largest eigenvalue of M = P^{-1} H using power iteration,
+    where H is the Hessian of loss w.r.t. params, and P is Adam’s preconditioner.
+
+    loss_closure: a function that recomputes and returns the scalar loss
+                  at the *current* params (params are not changed here).
+    params:       list(model.parameters()) to differentiate w.r.t.
+    optimizer:    the Adam optimizer whose state defines P.
+    """
+    def dot_vector_lists(a: List[torch.Tensor], b: List[torch.Tensor]) -> torch.Tensor:
+        return sum((ai * bi).sum() for ai, bi in zip(a, b))
+
+    model.zero_grad(set_to_none=True)
+    x, y, m = (t.to(device) for t in batch)
+    logits = model(x)
+    loss = loss_fn(logits, y, m)
+    params = [p for p in model.parameters() if p.requires_grad]
+    v = [torch.randn_like(p) for p in params]
+    _normalize(v)
+    lam = 0.0
+    for _ in range(iters):
+        Hv = hessian_vector_product(loss, params, v)
+        P_inv_list = adam_preconditioner_inverse_for_params(optimizer, params)
+
+        # Apply P^{-1}: w = (P^{-1} H) v
+        w = [P_inv * hv_i for P_inv, hv_i in zip(P_inv_list, Hv)]
+
+        # Rayleigh quotient λ ≈ v^T w / v^T v (v is normalized ⇒ denom ~ 1)
+        eigval_tensor = dot_vector_lists(v, w) / dot_vector_lists(v, v)
+        lam = eigval_tensor.item()
+        v = _normalize(w)
+
+    return float(lam)
+
+
 # ------------------------------
 # Experiment naming
 # ------------------------------
@@ -339,15 +412,24 @@ def train(args):
                     batch_small = next(iter(val_loader))
                 except StopIteration:
                     batch_small = batch
-                sharp = estimate_top_hessian_eig(
-                    model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
-                )
+                
+                if args.optim.lower() == "sgd":
+                    sharp = estimate_top_hessian_eig(
+                        model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
+                    )
+                    history.sharpness.append(sharp)
+                elif args.optim.lower() == "adam":
+                    preconditioned_sharp = estimate_top_PinvH_eig(
+                        model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
+                    )
+                    history.sharpness.append(preconditioned_sharp)
+                else:
+                    raise ValueError(f"Unknown optimizer: {args.optim}")
 
             history.step.append(step)
             history.loss.append(loss.item())
             history.acc.append(acc)
             history.grad_norm.append(gnorm)
-            history.sharpness.append(sharp)
             history.lrs.append(cur_lr)
             history.eos_threshold.append(eos_threshold)
 
