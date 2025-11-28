@@ -426,8 +426,7 @@ def train(args):
                 elif args.optim.lower() == "adam":
                     nu = get_adam_nu(opt)
                     P = (1 - args.beta1**step) * ((nu / (1 - args.beta2**step)).sqrt() + args.adam_eps)
-                    sharp = get_hessian_eigenvalues(model, masked_ce_loss, batch, neigs=1,
-                                                                physical_batch_size=args.batch_size, P=P).item()
+                    sharp = get_hessian_eigenvalues(model, masked_ce_loss, batch, neigs=1, P=P).item()
                     
                     # sharp = estimate_top_PinvH_eig(
                     #     model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
