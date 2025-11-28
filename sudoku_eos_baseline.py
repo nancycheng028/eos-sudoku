@@ -422,18 +422,17 @@ def train(args):
                     sharp = estimate_top_hessian_eig(
                         model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
                     )
-                    history.sharpness.append(sharp)
                 elif args.optim.lower() == "adam":
-                    preconditioned_sharp = estimate_top_PinvH_eig(
+                    sharp = estimate_top_PinvH_eig(
                         model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
                     )
-                    history.sharpness.append(preconditioned_sharp)
                 else:
                     raise ValueError(f"Unknown optimizer: {args.optim}")
 
             history.step.append(step)
             history.loss.append(loss.item())
             history.acc.append(acc)
+            history.sharpness.append(sharp)
             history.grad_norm.append(gnorm)
             history.lrs.append(cur_lr)
             history.eos_threshold.append(eos_threshold)
