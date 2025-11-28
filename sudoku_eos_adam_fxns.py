@@ -1,3 +1,11 @@
+"""
+Sudoku EoS Alternative Adam Functions
+
+Functions adapted from https://github.com/locuslab/edge-of-stability/blob/github/src/adam.py
+Which is the Github Repository corresponding to the paper "Adaptive Gradient Methods at the Edge of Stability" by 
+Jeremy Cohen et al., available here: https://arxiv.org/abs/2207.14484
+"""
+
 from typing import List, Tuple, Iterable
 
 import numpy as np

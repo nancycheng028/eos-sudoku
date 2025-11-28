@@ -424,13 +424,15 @@ def train(args):
                         model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
                     )
                 elif args.optim.lower() == "adam":
-                    nu = get_adam_nu(opt)
-                    P = (1 - args.beta1**step) * ((nu / (1 - args.beta2**step)).sqrt() + args.adam_eps)
-                    sharp = get_hessian_eigenvalues(model, masked_ce_loss, batch, neigs=1, P=P).item()
+                    # UNCOMMENT TO TRY TO RUN WITH FUNCTIONS FROM COHEN ET AL.'S ADAM IMPLEMENTATION
+                    # nu = get_adam_nu(opt)
+                    # P = (1 - args.beta1**step) * ((nu / (1 - args.beta2**step)).sqrt() + args.adam_eps)
+                    # sharp = get_hessian_eigenvalues(model, masked_ce_loss, batch, neigs=1, P=P).item()
                     
-                    # sharp = estimate_top_PinvH_eig(
-                    #     model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
-                    # )
+                    # RUN WITH FUNCTIONS FROM OWN IMPLEMENTATION
+                    sharp = estimate_top_PinvH_eig(
+                        model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
+                    )
                 else:
                     raise ValueError(f"Unknown optimizer: {args.optim}")
 
