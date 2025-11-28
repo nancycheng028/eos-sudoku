@@ -30,13 +30,14 @@ from typing import List, Callable
 
 import numpy as np
 import pandas as pd
+import matplotlib
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, random_split
 from torch.optim.lr_scheduler import StepLR, ExponentialLR, PolynomialLR
 
-import matplotlib
+from sudoku_eos_adam_fxns import *
 
 # for non-interactive environments, let user override via env
 if not matplotlib.get_backend().lower().startswith("agg"):
@@ -423,9 +424,14 @@ def train(args):
                         model, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
                     )
                 elif args.optim.lower() == "adam":
-                    sharp = estimate_top_PinvH_eig(
-                        model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
-                    )
+                    nu = get_adam_nu(opt)
+                    P = (1 - args.beta1**step) * ((nu / (1 - args.beta2**step)).sqrt() + args.adam_eps)
+                    sharp = get_hessian_eigenvalues(model, masked_ce_loss, batch, neigs=1,
+                                                                physical_batch_size=args.batch_size, P=P).item()
+                    
+                    # sharp = estimate_top_PinvH_eig(
+                    #     model, opt, masked_ce_loss, batch_small, device, iters=args.sharpness_iters
+                    # )
                 else:
                     raise ValueError(f"Unknown optimizer: {args.optim}")
 
@@ -540,7 +546,7 @@ def parse_args():
     p = argparse.ArgumentParser(description="Sudoku EoS Baseline")
     p.add_argument("--csv", type=str, default="sudoku.csv", help="Path to kaggle sudoku.csv")
     p.add_argument("--epochs", type=int, default=5)
-    p.add_argument("--batch-size", type=int, default=256)
+    p.add_argument("--batch_size", type=int, default=256)
 
     # optimization + LR
     p.add_argument("--optim", type=str, default="sgd", choices=["sgd", "adam"])
@@ -560,14 +566,14 @@ def parse_args():
     p.add_argument("--hidden", type=int, default=512)
     p.add_argument("--dropout", type=float, default=0.1)
     p.add_argument("--clip", type=float, default=0.0, help="grad clipping max-norm; 0 disables")
-    p.add_argument("--max-samples", type=int, default=50000, help="limit dataset for speed; None for all")
+    p.add_argument("--max_samples", type=int, default=50000, help="limit dataset for speed; None for all")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--cpu", action="store_true")
     p.add_argument("--log-every", type=int, default=50)
     p.add_argument("--sharpness-iters", type=int, default=4, help="power-iter steps for Hessian eig")
 
     # experiment naming
-    p.add_argument("--run-name", type=str, default="",
+    p.add_argument("--run_name", type=str, default="",
                    help="optional explicit experiment name under experiments/")
     return p.parse_args()
 
