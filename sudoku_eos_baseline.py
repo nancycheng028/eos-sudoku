@@ -254,6 +254,11 @@ def estimate_top_PinvH_eig(model: nn.Module, optimizer: torch.optim.Adam, loss_f
     params:       list(model.parameters()) to differentiate w.r.t.
     optimizer:    the Adam optimizer whose state defines P.
     """
+    def normalize_vector_list(v: List[torch.Tensor]) -> List[torch.Tensor]:
+        norm = torch.sqrt(sum((vi**2).sum() for vi in v))
+        norm = norm + 1e-12
+        return [vi / norm for vi in v]
+
     def dot_vector_lists(a: List[torch.Tensor], b: List[torch.Tensor]) -> torch.Tensor:
         return sum((ai * bi).sum() for ai, bi in zip(a, b))
 
@@ -263,7 +268,7 @@ def estimate_top_PinvH_eig(model: nn.Module, optimizer: torch.optim.Adam, loss_f
     loss = loss_fn(logits, y, m)
     params = [p for p in model.parameters() if p.requires_grad]
     v = [torch.randn_like(p) for p in params]
-    _normalize(v)
+    v = normalize_vector_list(v)
     lam = 0.0
     for _ in range(iters):
         Hv = hessian_vector_product(loss, params, v)
@@ -275,7 +280,7 @@ def estimate_top_PinvH_eig(model: nn.Module, optimizer: torch.optim.Adam, loss_f
         # Rayleigh quotient λ ≈ v^T w / v^T v (v is normalized ⇒ denom ~ 1)
         eigval_tensor = dot_vector_lists(v, w) / dot_vector_lists(v, v)
         lam = eigval_tensor.item()
-        v = _normalize(w)
+        v = normalize_vector_list(w)
 
     return float(lam)
 
