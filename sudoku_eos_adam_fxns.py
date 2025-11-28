@@ -18,23 +18,26 @@ def iterate_dataset(dataset: Dataset, batch_size: int):
         yield batch_X.cuda(), batch_y.cuda()
 
 def compute_hvp(network: nn.Module, loss_fn: nn.Module,
-                dataset: Dataset, vector: Tensor, physical_batch_size: int = 512, P: Tensor = None):
+                batch: Dataset, vector: Tensor, physical_batch_size: int = 512, P: Tensor = None):
     """Compute a Hessian-vector product.
     
     If the optional preconditioner P is not set to None, return P^{-1/2} H P^{-1/2} v rather than H v.
     """
     p = len(parameters_to_vector(network.parameters()))
-    n = len(dataset)
+    n = len(batch)
     hvp = torch.zeros(p, dtype=torch.float, device='cuda')
     vector = vector.cuda()
     if P is not None:
         vector = vector / P.cuda().sqrt()
-    for (X, y) in iterate_dataset(dataset, physical_batch_size):
-        loss = loss_fn(network(X), y) / n
-        grads = torch.autograd.grad(loss, inputs=network.parameters(), create_graph=True)
-        dot = parameters_to_vector(grads).mul(vector).sum()
-        grads = [g.contiguous() for g in torch.autograd.grad(dot, network.parameters(), retain_graph=True)]
-        hvp += parameters_to_vector(grads)
+
+    x, y, m = (t.to(device='cuda') for t in batch)
+    logits = network(x)
+    loss = loss_fn(logits, y, m)
+
+    grads = torch.autograd.grad(loss, inputs=network.parameters(), create_graph=True)
+    dot = parameters_to_vector(grads).mul(vector).sum()
+    grads = [g.contiguous() for g in torch.autograd.grad(dot, network.parameters(), retain_graph=True)]
+    hvp += parameters_to_vector(grads)
     if P is not None:
         hvp = hvp / P.cuda().sqrt()
     return hvp
