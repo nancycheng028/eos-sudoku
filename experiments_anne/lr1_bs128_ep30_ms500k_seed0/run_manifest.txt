@@ -1,0 +1,1 @@
+command: sudoku_eos_baseline.py --csv ../orcd/scratch/eoss_datasets/sudoku_data/sudoku.csv --max_samples 500000 --epochs 30 --lr 1 --lr_type constant --batch_size 128 --seed 0
