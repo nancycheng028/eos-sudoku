@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+export MPLBACKEND=Agg
+cd "$(dirname "$0")"
+
+run() {
+  echo ">>> $*"
+  python sudoku_eos_baseline.py "$@"
+}
+
+# ---------- SGD, constant LR ----------
+run --optim sgd --lr 0.11 --epochs 6  --batch-size 512 --run-name lr0.10_bs512_ep6_seed0
+run --optim sgd --lr 0.11 --epochs 8  --batch-size 512 --run-name lr0.10_bs512_ep8_seed0

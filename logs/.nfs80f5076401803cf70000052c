@@ -1,0 +1,16 @@
+/var/spool/slurmd/job6924912/slurm_script: line 13: conda: command not found
+/var/spool/slurmd/job6924912/slurm_script: line 15: cd: /orcd/home/annegv/eos-sudoku: No such file or directory
+usage: sudoku_eos_baseline.py [-h] [--csv CSV] [--epochs EPOCHS]
+                              [--batch_size BATCH_SIZE] [--optim {sgd,adam}]
+                              [--lr LR]
+                              [--lr_type {constant,step,exponential,polynomial}]
+                              [--lr_gamma LR_GAMMA] [--momentum MOMENTUM]
+                              [--beta1 BETA1] [--beta2 BETA2]
+                              [--adam_eps ADAM_EPS]
+                              [--weight_decay WEIGHT_DECAY] [--hidden HIDDEN]
+                              [--dropout DROPOUT] [--clip CLIP]
+                              [--max_samples MAX_SAMPLES] [--seed SEED]
+                              [--cpu] [--log-every LOG_EVERY]
+                              [--sharpness-iters SHARPNESS_ITERS]
+                              [--run_name RUN_NAME]
+sudoku_eos_baseline.py: error: unrecognized arguments: --batch-size 512 --run-name lr0.10_bs512_ep6_seed0
